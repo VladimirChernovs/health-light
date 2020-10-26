@@ -4,7 +4,9 @@ package com.black.mono.service.mapper;
 import com.black.mono.domain.model.Enrollee;
 import com.black.mono.service.dto.EnrolleeBaseDTO;
 import com.black.mono.service.dto.EnrolleeDTO;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * Mapper for the entity {@link Enrollee} and its DTO {@link EnrolleeDTO}.

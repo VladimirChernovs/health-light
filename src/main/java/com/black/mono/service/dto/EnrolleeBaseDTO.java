@@ -16,7 +16,7 @@ import java.time.LocalDate;
  * A DTO for the Post Enrollee entity.
  */
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class EnrolleeBaseDTO {
 

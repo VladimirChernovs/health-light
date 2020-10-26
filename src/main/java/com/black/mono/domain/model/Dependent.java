@@ -1,5 +1,7 @@
 package com.black.mono.domain.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
@@ -15,6 +17,8 @@ import java.time.LocalDate;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "dependent")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

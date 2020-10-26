@@ -1,6 +1,8 @@
 package com.black.mono.domain.model;
 
 import com.black.mono.config.Constants;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
@@ -16,6 +18,8 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "enrollee")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

@@ -2,6 +2,41 @@ plugins {
 	id 'org.springframework.boot' version '2.3.3.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id "idea"
+}
+
+idea {
+	module {
+		excludeDirs += files("node_modules")
+	}
+}
+
+defaultTasks "bootRun"
+
+springBoot {
+	mainClassName = "com.black.mono.HealthApp"
+}
+
+test {
+	useJUnitPlatform()
+	exclude "**/*IT*", "**/*IntTest*"
+
+	testLogging {
+		events 'FAILED', 'SKIPPED'
+	}
+	reports.html.enabled = true
+}
+
+task integrationTest(type: Test) {
+	useJUnitPlatform()
+	description = "Execute integration tests."
+	group = "verification"
+	include "**/*IT*", "**/*IntTest*"
+
+	testLogging {
+		events 'FAILED', 'SKIPPED'
+	}
+	reports.html.enabled = true
 }
 
 group = 'com.black'
@@ -11,6 +46,7 @@ sourceCompatibility = '1.8'
 ext {
 	springfoxVersion = '3.0.0'
 	mapstruct_version = '1.3.1.Final'
+	archunit_junit5_version = '0.14.1'
 }
 
 repositories {
@@ -34,11 +70,13 @@ dependencies {
 
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-}
 
-test {
-	useJUnitPlatform()
+	testImplementation ("org.springframework.boot:spring-boot-starter-test") {
+		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
+	}
+	testImplementation "org.springframework.security:spring-security-test"
+	testImplementation "org.springframework.boot:spring-boot-test"
+	testImplementation "com.tngtech.archunit:archunit-junit5-api:${archunit_junit5_version}"
+	testRuntimeOnly "com.tngtech.archunit:archunit-junit5-engine:${archunit_junit5_version}"
+	testImplementation "com.h2database:h2"
 }
