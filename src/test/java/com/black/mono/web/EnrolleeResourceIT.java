@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -65,6 +66,8 @@ public class EnrolleeResourceIT {
 
     private Enrollee enrollee;
 
+    private EnrolleeBaseDTO enrolleeBaseDTO;
+
     /**
      * Create an entity for this test.
      * <p>
@@ -100,6 +103,7 @@ public class EnrolleeResourceIT {
     @BeforeEach
     public void initTest() {
         enrollee = createEntity(em);
+        enrolleeBaseDTO = new EnrolleeBaseDTO();
     }
 
     @Test
@@ -110,7 +114,7 @@ public class EnrolleeResourceIT {
         EnrolleeBaseDTO enrolleeBaseDTO = new EnrolleeBaseDTO();
         EnrolleeDTO enrolleeDTO = enrolleeMapper.toDto(enrollee);
         BeanUtils.copyProperties(enrolleeDTO, enrolleeBaseDTO);
-        restEnrolleeMockMvc.perform(post("/api/enrollees")
+        restEnrolleeMockMvc.perform(post("/api/enrollee")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(enrolleeBaseDTO)))
                 .andExpect(status().isCreated());
@@ -127,27 +131,6 @@ public class EnrolleeResourceIT {
 
     @Test
     @Transactional
-    public void createEnrolleeWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = enrolleeRepository.findAll().size();
-
-        // Create the Enrollee with an existing ID
-        enrollee.setId(1L);
-        EnrolleeDTO enrolleeDTO = enrolleeMapper.toDto(enrollee);
-
-        // An entity with an existing ID cannot be created, so this API call must fail
-        restEnrolleeMockMvc.perform(post("/api/enrollees")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtil.convertObjectToJsonBytes(enrolleeDTO)))
-                .andExpect(status().isBadRequest());
-
-        // Validate the Enrollee in the database
-        List<Enrollee> enrolleeList = enrolleeRepository.findAll();
-        assertThat(enrolleeList).hasSize(databaseSizeBeforeCreate);
-    }
-
-
-    @Test
-    @Transactional
     public void checkNameIsRequired() throws Exception {
         int databaseSizeBeforeTest = enrolleeRepository.findAll().size();
         // set the field null
@@ -155,11 +138,10 @@ public class EnrolleeResourceIT {
 
         // Create the Enrollee, which fails.
         EnrolleeDTO enrolleeDTO = enrolleeMapper.toDto(enrollee);
-
-
-        restEnrolleeMockMvc.perform(post("/api/enrollees")
+        BeanUtils.copyProperties(enrolleeDTO, enrolleeBaseDTO);
+        restEnrolleeMockMvc.perform(post("/api/enrollee")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtil.convertObjectToJsonBytes(enrolleeDTO)))
+                .content(TestUtil.convertObjectToJsonBytes(enrolleeBaseDTO)))
                 .andExpect(status().isBadRequest());
 
         List<Enrollee> enrolleeList = enrolleeRepository.findAll();
@@ -175,11 +157,10 @@ public class EnrolleeResourceIT {
 
         // Create the Enrollee, which fails.
         EnrolleeDTO enrolleeDTO = enrolleeMapper.toDto(enrollee);
-
-
-        restEnrolleeMockMvc.perform(post("/api/enrollees")
+        BeanUtils.copyProperties(enrolleeDTO, enrolleeBaseDTO);
+        restEnrolleeMockMvc.perform(post("/api/enrollee")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtil.convertObjectToJsonBytes(enrolleeDTO)))
+                .content(TestUtil.convertObjectToJsonBytes(enrolleeBaseDTO)))
                 .andExpect(status().isBadRequest());
 
         List<Enrollee> enrolleeList = enrolleeRepository.findAll();
@@ -195,11 +176,10 @@ public class EnrolleeResourceIT {
 
         // Create the Enrollee, which fails.
         EnrolleeDTO enrolleeDTO = enrolleeMapper.toDto(enrollee);
-
-
-        restEnrolleeMockMvc.perform(post("/api/enrollees")
+        BeanUtils.copyProperties(enrolleeDTO, enrolleeBaseDTO);
+        restEnrolleeMockMvc.perform(post("/api/enrollee")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtil.convertObjectToJsonBytes(enrolleeDTO)))
+                .content(TestUtil.convertObjectToJsonBytes(enrolleeBaseDTO)))
                 .andExpect(status().isBadRequest());
 
         List<Enrollee> enrolleeList = enrolleeRepository.findAll();
@@ -257,7 +237,9 @@ public class EnrolleeResourceIT {
         int databaseSizeBeforeUpdate = enrolleeRepository.findAll().size();
 
         // Update the enrollee
-        Enrollee updatedEnrollee = enrolleeRepository.findById(enrollee.getId()).get();
+        Long id = enrollee.getId();
+        Optional<Enrollee> optionalEnrollee = enrolleeRepository.findById(id);
+        Enrollee updatedEnrollee = optionalEnrollee.get(); // glich
         // Disconnect from session so that the updates on updatedEnrollee are not directly saved in db
         em.detach(updatedEnrollee);
         updatedEnrollee = Enrollee.builder()
@@ -267,6 +249,7 @@ public class EnrolleeResourceIT {
                 .phoneNumber(UPDATED_PHONE_NUMBER)
                 .build();
         EnrolleeDTO enrolleeDTO = enrolleeMapper.toDto(updatedEnrollee);
+        enrolleeDTO.setId(id);
 
         restEnrolleeMockMvc.perform(put("/api/enrollees")
                 .contentType(MediaType.APPLICATION_JSON)
