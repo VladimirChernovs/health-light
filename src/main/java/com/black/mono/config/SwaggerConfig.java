@@ -15,8 +15,8 @@ public class SwaggerConfig {
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .description("Health REST API Demo")
-                        .title("Health REST API")
+                        .description("Health-light REST API Demo")
+                        .title("Health-light REST API")
                         .version("1.0.0")
                         .build())
                 .enable(true)

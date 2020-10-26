@@ -1,8 +1,6 @@
 package com.black.mono.web.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 
 import java.io.UnsupportedEncodingException;
@@ -24,7 +22,7 @@ public final class HeaderUtil {
      * <p>createAlert.</p>
      *
      * @param message a {@link String} object.
-     * @param id a {@link String} object.
+     * @param id      a {@link String} object.
      * @return a {@link HttpHeaders} object.
      */
     public static HttpHeaders createAlert(String message, Long id) {
@@ -43,7 +41,7 @@ public final class HeaderUtil {
      * <p>createEntityCreationAlert.</p>
      *
      * @param entityName a {@link String} object.
-     * @param id a {@link String} object.
+     * @param id         a {@link String} object.
      * @return a {@link HttpHeaders} object.
      */
     public static HttpHeaders createEntityCreationAlert(String entityName, Long id) {
@@ -55,7 +53,7 @@ public final class HeaderUtil {
      * <p>createEntityUpdateAlert.</p>
      *
      * @param entityName a {@link String} object.
-     * @param id a {@link String} object.
+     * @param id         a {@link String} object.
      * @return a {@link HttpHeaders} object.
      */
     public static HttpHeaders createEntityUpdateAlert(String entityName, Long id) {
@@ -67,29 +65,26 @@ public final class HeaderUtil {
      * <p>createEntityDeletionAlert.</p>
      *
      * @param entityName a {@link String} object.
-     * @param id a {@link String} object.
+     * @param id         a {@link String} object.
      * @return a {@link HttpHeaders} object.
      */
-    public static HttpHeaders createEntityDeletionAlert( String entityName, Long id) {
-        String message =  "A " + entityName + " is deleted with identifier " + id;
+    public static HttpHeaders createEntityDeletionAlert(String entityName, Long id) {
+        String message = "A " + entityName + " is deleted with identifier " + id;
         return createAlert(message, id);
     }
 
     /**
      * <p>createFailureAlert.</p>
      *
-     * @param entityName a {@link String} object.
-     * @param errorKey a {@link String} object.
+     * @param entityName     a {@link String} object.
      * @param defaultMessage a {@link String} object.
      * @return a {@link HttpHeaders} object.
      */
-    public static HttpHeaders createFailureAlert( String entityName, String errorKey, String defaultMessage) {
+    public static HttpHeaders createFailureAlert(String entityName, String defaultMessage) {
         log.error("Entity processing failed, {}", defaultMessage);
 
-        String message = defaultMessage;
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-" + APPLICATION + "-error", message);
+        headers.add("X-" + APPLICATION + "-error", defaultMessage);
         headers.add("X-" + APPLICATION + "-params", entityName);
         return headers;
     }
